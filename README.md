@@ -44,3 +44,5 @@ On peut aussi déterminer les propriétés à animer en javascript :
 var monParallax = new RegalParallax( document.querySelector('.element'), {'y':'110#0', 'x':'-30#0', 'end':'4'});
 Les noms des paramètres sont les mêmes qu'en version HTML sans "data-".
 Les propriétés déclarées en javascript écrasent les valeurs déclarées en HTML. 
+
+Démo: http://www.regaloeb.com/pages/regal-parallax-vanilla/
