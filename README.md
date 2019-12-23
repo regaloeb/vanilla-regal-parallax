@@ -5,17 +5,17 @@ Mieux que mieux !
 
 En modifiant uniquement les éléments transform et opacity des objets parallaxés, on gagne en performance par rapports aux parallax qui modifient les margin, padding, top, left, etc. Alors, c'est mieux.
 Et comme c'est un constructeur vanilla, pas besoin de jQuery. Alors, c'est encore mieux.
-Nouveauté mai 2019 !
 
+Nouveauté mai 2019 !
 Maintenant, on peut appliquer des transform et une opacité aux objets parallaxés via CSS sans que ceux-ci ne soient écrasés par le script grace au getComputedStyle(plugin.el).transform et quelques génuflexions neuronales !
 
 Cependant, skew, scale et rotate ne font pas bon ménage.
 La matrix retournée par getComputedStyle(plugin.el).transform est trop compliquée à décortiquer.
 Il faut éviter d'appliquer simultanément skew/scale ou skew/rotate (CSS et/ou data)...
 En fait, le mieux est de ne pas utiliser de skew !
+
 Utilisation du plugin
 Inclure le plugin à sa page
-
 <script type="text/javascript" src="js/regal-parallax-vanilla.js"></script>
 ou
 <script type="text/javascript" src="js/regal-parallax-vanilla.min.js"></script>
