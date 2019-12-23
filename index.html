@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8">		
+        <title>Vanilla Parallax</title>
+		<meta name="description" content="regaloeb vous présente son constructeur parallax vanilla (sans jQuery).">
+		
+		<meta property="og:title" content="Vanilla Parallax">
+		<meta property="og:description" content="regaloeb vous présente son constructeur parallax vanilla (sans jQuery).">
+		<meta property="og:image" content="http://www.regaloeb.com/pages/regal-parallax-vanilla/img/fb-thumb.png">
+		<meta property="og:url" content="http://www.regaloeb.com/pages/regal-parallax-vanilla/index.html">
+		<meta property="og:site_name" content="regaloeb.com">
+		<meta property="og:type" content="website">
+		<meta property="fb:admins" content="595624305">
+		<meta property="fb:app_id" content="217293022051519">
+		<link rel="canonical" href="http://www.regaloeb.com/pages/regal-parallax-vanilla/index.html">
+		
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700" rel="stylesheet"> 
+		<link href="css/regaloebParallax.css" rel="stylesheet" type="text/css">
+		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+				
+		<!--[if lte IE 9]><script type="text/javascript" src="js/html5-ie.js"></script><![endif]-->
+	</head>
+	<body>
+		<div class="page-content">
+			
+			<div class="description">
+				<h1>Parallax Vanilla</h1>
+				<h2>Mieux que mieux&nbsp;!</h2>
+				<p>
+					En modifiant uniquement les éléments <i>transform</i> et <i>opacity</i> des objets parallaxés, on gagne en performance par rapports aux parallax qui modifient les margin, padding, top, left, etc. Alors, c'est mieux.<br>
+					Et comme c'est un constructeur vanilla, pas besoin de jQuery. Alors, c'est encore mieux.
+				</p>
+				<h2 style="color:red;">Nouveauté mai 2019&nbsp;!</h2>
+				<p>
+					Maintenant, on peut appliquer des transform et une opacité aux objets parallaxés via CSS sans que ceux-ci ne soient écrasés par le script grace au <i>getComputedStyle(plugin.el).transform</i> et quelques génuflexions neuronales&nbsp;!
+				</p>
+				<p>
+					<span style="color:red;">Cependant, skew, scale et rotate ne font pas bon ménage.</span><br>
+					La matrix retournée par <i>getComputedStyle(plugin.el).transform</i> est trop compliquée à décortiquer.<br>
+					Il faut éviter d'appliquer simultanément skew/scale ou skew/rotate (CSS et/ou data)...<br>
+					<strong>En fait, le mieux est de ne pas utiliser de skew&nbsp;!</strong>
+				</p>
+				<h2>Utilisation du plugin</h2>
+				<h3>Inclure le plugin à sa page</h3>
+				<p>
+					<i>&lt;script type="text/javascript" src="js/regal-parallax-vanilla.js">&lt;/script></i>
+				</p>
+				<h3>Déclarer les objets&nbsp;:</h3>
+				<p>
+					<i>
+						var regalParallax = document.querySelectorAll('.js-regaloeb-parallax');<br>
+						for(var i=0; i&lt;regalParallax.length; i++){<br>
+							&nbsp; &nbsp; new RegalParallax( regalParallax[i]);<br>
+						}<br>
+					</i>
+				</p>
+				<h3>HTML</h3>
+				<p>
+					On détermine les propriétés à animer avec des attributs "data-XXX".<br>
+					L'attribut <i>data-x="INITIAL#FINAL"</i> indique que le translateX sera modifiée via la propriété translate3d.<br>
+					L'attribut <i>data-y="INITIAL#FINAL"</i> indique que la translateY sera modifiée via la propriété translate3d.<br>
+					L'attribut <i>data-scale="INITIAL#FINAL"</i> indique que la scale sera modifiée, INITIAL: scale initiale, FINAL: scale finale.<br>
+					L'attribut <i>data-rotate="INITIAL#FINAL"</i> indique que la rotation sera modifiée, INITIAL: rotate initiale, FINAL: rotate finale.<br>
+					L'attribut <i>data-skewX="INITIAL#FINAL"</i> indique que le skewX sera modifiée, INITIAL: skewX initiale, FINAL: skewX finale.<br>
+					L'attribut <i>data-skewY="INITIAL#FINAL"</i> indique que le skewY sera modifiée, INITIAL: skewY initiale, FINAL: skewY finale.<br>
+					L'attribut <i>data-o="INITIAL#FINAL"</i> indique que l'opacité sera modifiée.<br>
+					L'attribut <i>data-end="NUM"</i> indique à quel endroit du viewport l'objet atteint ses valeurs finales : 2 = au milieu, 3 = au 2/3, 1 au scroll 0. Valeur par défaut: 2.<br><br>
+					Lorsque l'élément arrive dans le viewport, la propriété prend la valeur INITIAL<br>
+					À l'endroit du viewport déterminé par data-end (au milieu par défaut), la propriété prend la valeur FINAL.<br><br>
+					<strong>Petit truc&nbsp;:</strong> en rajoutant une transition sur le transform et l'opacity, l'objet continue à "bouger" à la fin du scroll (plus ou moins longtemps selon la durée de la transition - ici : 0.3s).
+				</p>
+				<p>
+					<strong>On peut aussi déterminer les propriétés à animer en javascript&nbsp;:</strong><br>
+					<i>var monParallax = new RegalParallax( document.querySelector('.element'), <strong>{'y':'110#0', 'x':'-30#0', 'end':'4'}</strong>);</i><br>
+					Les noms des paramètres sont les mêmes qu'en version HTML sans "data-".<br>
+					Les propriétés déclarées en javascript écrasent les valeurs déclarées en HTML.
+				</p>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans"
+					data-rotate="360#0" style="transform:rotate(45deg);">
+					<p>
+						data-rotate="360#0"<br>
+						<span style="color:red;">rotate(45deg) en CSS</span>
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans trace"
+					data-x="500#0" data-skewX="40#0" style="transform:translateX(-50%) skewX(10deg) skewY(25deg);">
+					<p>
+						data-x="500#0" data-skewX="40#0"<br>
+						<span style="color:red;">skewX:10deg, skewY:25deg et translateX:-50% initiaux en CSS</span>
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" id="test"  alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-x="-500#0">
+					<p>
+						data-x="-500#0"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-y="-200#0">
+					<p>
+						data-y="-200#0"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-scale="0#1">
+					<p>
+						data-scale="0#1"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-scale="2#1">
+					<p>
+						data-scale="2#1"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" id="debug" 
+					data-o="0#0.5" style="opacity:.75;">
+					<p>
+						data-o="0#1" <br>
+						<span style="color:red;">opacity:.75 en CSS, la valeur finale du paramètre "data-o" (ici: 1) est remplacée par cette valeur initiale</span>
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-skewX="50#0">
+					<p>
+						data-skewX="50#0"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-skewY="50#0">
+					<p>
+						data-skewY="50#0"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-skewX="50#0" data-skewY="50#0">
+					<p>
+						data-skewX="50#0" data-skewY="50#0"
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-rotate="360#0" data-x="250#0" data-o="0#1" data-scale="0#1">
+					<p>
+						data-rotate="360#0" data-x="true" data-x-depth="-2" data-o="0#1" data-scale="0#1" 
+					</p>
+				</div>
+				<div class="elt">
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans" 
+					data-rotate="360#0" data-end="1"><p>
+						data-rotate="360#0"  data-end="1"
+					</p>
+				</div>
+				<div class="bg bg-test js-height">
+					<p>
+						Pour parallaxer un background, il faut ruser...<br>
+						Un conteneur principal (.bg) avec <strong>position: relative; et overflow: hidden;</strong><br>
+						L'élément parallaxé est en position: <strong>absolute; z-index: -1;	left: -50%;	top: 0;	width: 200%; height: 200%; background-position: 50% 50%; et il a une image de fond plus grande que son conteneur.</strong><br>
+						On y applique un data-y="INITIAL#FINAL".
+					</p>
+					<div class="bg-parallax js-regaloeb-parallax" style="background-image: url(img/bg-01.jpg)" data-y="-250#250" data-end="1"></div>
+				</div>
+				
+				<div class="bg bg-test js-height">
+					<p>
+						<strong>Avec un data-x="INITIAL#FINAL".</strong>
+					</p>
+					<div class="relative-cont">
+						<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans left" data-x="350#0" data-o="0#1" data-end="2">
+						<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans right" data-x="-350#0" data-o="0#1" data-end="2">
+					</div>
+					<div class="bg-parallax js-regaloeb-parallax" style="background-image: url(img/bg-03.jpg)" data-x="-250#250" data-end="1"></div>
+				</div>
+				
+				<div class="bg bg-test js-height">
+					<p>
+						<strong>Avec data-x="INITIAL#FINAL" + data-y="INITIAL#FINAL".</strong>
+					</p>
+					<div class="bg-parallax js-regaloeb-parallax" style="background-image: url(img/bg-04.jpg)" data-y="-200#200" data-x="50#-250" data-end="1"></div>
+				</div>
+				
+				<div class="bg bg-test js-height">
+					<p>
+						<strong>Avec un data-x="INITIAL#FINAL" et data-end="2".</strong>
+					</p>
+					<img src="img/XL.png" alt="C'est ouam" class="js-regaloeb-parallax trans left" data-x="350#0" data-o="0#1" data-end="2">
+					<div class="bg-parallax js-regaloeb-parallax" style="background-image: url(img/bg-05.jpg)" data-x="-200#0" data-end="2"></div>
+				</div>
+				
+				<div class="bg bg-test js-height bg-fixed bg-cover" style="background-image: url(img/bg-02.jpg); overflow: visible;">
+					<p>
+						Autre méthode <strong>bien plus simple car on n'utilise pas le plugin !!</strong> :<br>
+						Juste appliquer un background-fixed au conteneur !<br><br>
+						Mais beaucoup de mobiles ne comprennent pas le background-fixed (les nazes)...
+					</p>
+				</div>
+			</div>
+			
+			<div class="outro js-height" data-height-ratio="1">
+				<p class="message">Merci, c'est tout pour l'instant.</p>
+			</div>
+		</div>
+		<script src="js/regal-parallax-vanilla.js"></script>
+		<script>
+			var regalParallax = document.querySelectorAll('.js-regaloeb-parallax');
+			for(var i=0; i<regalParallax.length; i++){
+				new RegalParallax( regalParallax[i]);
+			}
+		</script>
+    </body>
+</html>

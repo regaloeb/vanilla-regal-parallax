@@ -1,0 +1,134 @@
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: 'Ubuntu', Arial, sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+  font-size: 16px;
+  font-size: 1.6rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+.page-content {
+  overflow-x: hidden;
+}
+
+.bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-parallax {
+  position: absolute;
+  z-index: -1;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  background-position: 50% 50%;
+}
+
+.bg-fixed {
+  background-attachment: fixed;
+}
+
+.bg-cover {
+  background-size: cover;
+}
+
+.bg-test {
+  width: 100%;
+  min-height: 100vh;
+  padding: 25px;
+  margin-top: 25px;
+}
+.bg-test p {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 10px;
+}
+
+.outro {
+  min-height: 100vh;
+  position: relative;
+}
+.outro .message {
+  font-size: 3vw;
+  font-weight: bold;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+@media (max-width: 940px) {
+  .outro .message {
+    font-size: 2rem;
+  }
+}
+
+.description {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+}
+.description h1 {
+  font-size: 3vw;
+}
+@media (max-width: 500px) {
+  .description h1 {
+    font-size: 3rem;
+  }
+}
+.description i {
+  background: #ddd;
+  font-style: normal;
+  margin: 0;
+}
+.description .elt {
+  text-align: center;
+}
+.description .elt img {
+  display: inline-block;
+  vertical-align: middle;
+}
+.description .elt p {
+  width: 100%;
+  text-align: center;
+}
+.description .trans {
+  -webkit-transition: transform 0.3s ease-out;
+  -moz-transition: transform 0.3s ease-out;
+  -ms-transition: transform 0.3s ease-out;
+  -o-transition: transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+}
+.description .relative-cont {
+  position: relative;
+  min-height: 250px;
+}
+.description .relative-cont .left {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.description .relative-cont .right {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/*# sourceMappingURL=regaloebParallax.css.map */
