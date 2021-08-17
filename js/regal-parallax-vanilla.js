@@ -1,3 +1,4 @@
+//regal-parallax
 var RegalParallax = function(selector, options){
 	var plugin = this;
 	
@@ -11,6 +12,8 @@ var RegalParallax = function(selector, options){
 			y: (plugin.el.getAttribute('data-y') && plugin.el.getAttribute('data-y') !== '') ? plugin.el.getAttribute('data-y') : 0,
 			rotate: (plugin.el.getAttribute('data-rotate') && plugin.el.getAttribute('data-rotate') !== '') ? plugin.el.getAttribute('data-rotate') : 0,
 			scale: (plugin.el.getAttribute('data-scale') && plugin.el.getAttribute('data-scale') !== '') ? plugin.el.getAttribute('data-scale') : 0,
+			scaleX: (plugin.el.getAttribute('data-scaleX') && plugin.el.getAttribute('data-scaleX') !== '') ? plugin.el.getAttribute('data-scaleX') : 0,
+			scaleY: (plugin.el.getAttribute('data-scaleY') && plugin.el.getAttribute('data-scaleY') !== '') ? plugin.el.getAttribute('data-scaleY') : 0,
 			o: (plugin.el.getAttribute('data-o') && plugin.el.getAttribute('data-o') !== '') ? plugin.el.getAttribute('data-o') : 0,
 			sx: (plugin.el.getAttribute('data-skewX') && plugin.el.getAttribute('data-skewX') !== '') ? plugin.el.getAttribute('data-skewX') : 0,
 			sy: (plugin.el.getAttribute('data-skewY') && plugin.el.getAttribute('data-skewY') !== '') ? plugin.el.getAttribute('data-skewY') : 0,
@@ -19,23 +22,23 @@ var RegalParallax = function(selector, options){
 		
 		if (typeof Object.assign != 'function') {
 		  Object.assign = function(target, varArgs) { // .length of function is 2
-			'use strict';
-			if (target == null) { // TypeError if undefined or null
-			  throw new TypeError('Cannot convert undefined or null to object');
-			}
-			var to = Object(target);
-			for (var index = 1; index < arguments.length; index++) {
-			  var nextSource = arguments[index];
-			  if (nextSource != null) { // Skip over if undefined or null
-				for (var nextKey in nextSource) {
-				  // Avoid bugs when hasOwnProperty is shadowed
-				  if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-					to[nextKey] = nextSource[nextKey];
-				  }
-				}
-			  }
-			}
-			return to;
+        'use strict';
+        if (target == null) { // TypeError if undefined or null
+          throw new TypeError('Cannot convert undefined or null to object');
+        }
+        var to = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+          var nextSource = arguments[index];
+          if (nextSource != null) { // Skip over if undefined or null
+            for (var nextKey in nextSource) {
+              // Avoid bugs when hasOwnProperty is shadowed
+              if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+              }
+            }
+          }
+        }
+        return to;
 		  };
 		}
 		plugin.o = Object.assign({}, defaults, options);
@@ -43,7 +46,7 @@ var RegalParallax = function(selector, options){
 		var w = window,
 		d = document,
 		e = d.documentElement,
-		g = d.getElementsByTagName('body')[0]
+		g = d.getElementsByTagName('body')[0];
 		var lastScroll,
 			scrolled = window.pageYOffset,
 			top = plugin.el.getBoundingClientRect().top + window.pageYOffset,
@@ -52,11 +55,7 @@ var RegalParallax = function(selector, options){
 			windowHeight = w.innerHeight||e.clientHeight||g.clientHeight,
 			docHeight = document.body.clientHeight||document.documentElement.clientHeight||document.documentElement.scrollHeight;
 		var isFixed = window.getComputedStyle(plugin.el).position === 'fixed';
-		//IE version
-		var isIE = function() {
-			var myNav = navigator.userAgent.toLowerCase();
-			return (myNav.indexOf('msie') !== -1) ? parseInt(myNav.split('msie')[1]) : false;
-		};
+    
 		function deltaTransformPoint(matrix, point)  {
 			var dx = point.x * matrix[0] + point.y * matrix[2] + 0;
 			var dy = point.x * matrix[1] + point.y * matrix[3] + 0;
@@ -76,7 +75,11 @@ var RegalParallax = function(selector, options){
 				var b = values[1];
 				var c = values[2];
 				var d = values[3];
+        var scaleXcygne = parseFloat(a) < 0 ? -1 : 1;
+        var scaleYcygne = parseFloat(d) < 0 ? -1 : 1;
 				transform.scale = Math.sqrt(a*a + b*b).toFixed(2);
+				transform.scaleX = Math.sqrt(a*a + b*b)*scaleXcygne.toFixed(2);
+				transform.scaleY = Math.sqrt(c*c + d*d)*scaleYcygne.toFixed(2);
 				transform.rotate = Math.round(Math.atan2(b, a) * (180/Math.PI));
 				/*
 				var denom = Math.pow(a, 2) + Math.pow(b, 2)
@@ -102,7 +105,12 @@ var RegalParallax = function(selector, options){
 			return matrix;
 		}
 		
-		var initVars = function(){
+    var isInViewport = function(element) {
+      var rect = element.getBoundingClientRect();
+      return rect.top < (window.innerHeight || document.documentElement.clientHeight) && rect.bottom > 0;
+    };
+    
+		var initWindowVars = function(){
 			scrolled = window.pageYOffset,
 			top = plugin.el.getBoundingClientRect().top + window.pageYOffset,
 			h = parseInt(getComputedStyle(plugin.el).height),
@@ -110,17 +118,34 @@ var RegalParallax = function(selector, options){
 			windowHeight = w.innerHeight||e.clientHeight||g.clientHeight;
 			docHeight = document.documentElement.scrollHeight;
 		}
-		initVars();
+		initWindowVars();
 		
 		var initMatrix = getMatrixTransform();
-		var initTransForm = getTransform();
-		var initO = parseFloat(getComputedStyle(plugin.el).opacity);
-		
+		var initTransForm;
+		var initO;
+		var initTranslateX;
+		var initTranslateY;
+    var translateX;
+    var translateY;
+    var initMatrixVars = function(){
+      initMatrix = getMatrixTransform();
+      initTransForm = getTransform();
+      initO = parseFloat(getComputedStyle(plugin.el).opacity);
+      initTranslateX = (initMatrix !== 'none') ? initTransForm.translateX : 0;
+      initTranslateY = (initMatrix !== 'none') ? initTransForm.translateY : 0;
+      translateX = initTranslateX;
+      translateY = initTranslateY;
+      /*if(plugin.el.classList.contains('traceme')){
+        console.log("===== initMatrix: ", initMatrix);
+      }*/
+    }
+    //initMatrixVars();
+    
 		var parallaxit = function(){
 			scrolled = window.pageYOffset,
-			top = plugin.el.getBoundingClientRect().top + (plugin.el.getBoundingClientRect().height/2) + scrolled;
+			top = plugin.el.getBoundingClientRect().top + scrolled;
 			var distance = scrolled + windowHeight - top;
-			var ratio = (distance / ((windowHeight + h)) * (100 * plugin.o.end)) - plugin.o.start;
+			var ratio = (distance / windowHeight * (100 * plugin.o.end)) - plugin.o.start;
 			if(isFixed){
 				ratio = ((scrolled + windowHeight) / docHeight) * (100 * plugin.o.end) - plugin.o.start;
 			}
@@ -130,56 +155,34 @@ var RegalParallax = function(selector, options){
 			}
 			var cssparam = {};
 			
-			/*if(plugin.el.classList.contains('trace')){
-				console.log("plugin.el: ", plugin.el);
-				console.log("initX: ", initX);
-				console.log("initMatrix: ", initMatrix);
-				console.log("translateX: ", translateX);
-			}*/
-			
 			//translateX
-			var translateX = (initMatrix !== 'none') ? initTransForm.translateX : 0;
 			if(plugin.o.x){				
-				var initX = (initMatrix !== 'none') ? initTransForm.translateX : 0;
 				var x0 = parseFloat(plugin.o.x.split('#')[0], 10);
 				var x1 = parseFloat(plugin.o.x.split('#')[1], 10);
 				var deltaX = x1 - x0;
-				translateX = ((x0 + (ratio*deltaX/100)) + initX).toFixed(0) + 'px';
+				translateX = ((x0 + (ratio*deltaX/100)) + initTranslateX).toFixed(0) + 'px';
 			}
-			
 			//translateY
-			var translateY = (initMatrix !== 'none') ? initTransForm.translateY : 0;
 			if(plugin.o.y){	
-				var initY = (initMatrix !== 'none') ? initTransForm.translateY : 0;
 				var y0 = parseFloat(plugin.o.y.split('#')[0], 10);
 				var y1 = parseFloat(plugin.o.y.split('#')[1], 10);
 				var deltaY = y1 - y0;
-				translateY = ((y0 + (ratio*deltaY/100)) + initY).toFixed(0) + 'px';
+				translateY = ((y0 + (ratio*deltaY/100)) + initTranslateY).toFixed(0) + 'px';
 			}
-			
 			if(translateX !== 0 || translateY !== 0){
 				if(cssparam.transform){
-					if(isIE() && isIE() <= 9){
-						cssparam.transform += 'translate(' + translateX + ', ' + translateY + ') ';
-					}
-					else{
-						cssparam.transform += 'translate3d(' + translateX + ', ' + translateY + ', 0) ';
-					}
+					cssparam.transform += 'translate3d(' + translateX + ', ' + translateY + ', 0) ';
 				}
 				else{
-					if(isIE() && isIE() <= 9){
-						cssparam.transform = 'translate(' + translateX + ', ' + translateY + ') ';
-					}
-					else{
-						cssparam.transform = 'translate3d(' + translateX + ', ' + translateY + ', 0) ';
-					}
+					cssparam.transform = 'translate3d(' + translateX + ', ' + translateY + ', 0) ';
 				}
 			}
 			
 			//scale
+      /*
 			var initS = (initMatrix !== 'none') ? parseFloat(initTransForm.scale) : 0;
 			var scale = (initMatrix !== 'none') ? parseFloat(initTransForm.scale) : 1;
-			if (plugin.o.scale && plugin.o.scale !== ''){
+			if (plugin.o.scale && plugin.o.scale !== ''){0
 				var scale0 = parseFloat(plugin.o.scale.split('#')[0], 10);
 				var scale1 = parseFloat(plugin.o.scale.split('#')[1], 10);
 				var deltaS = scale1 - scale0;
@@ -191,7 +194,50 @@ var RegalParallax = function(selector, options){
 			else{
 				cssparam.transform = 'scale('+ scale + ') ';
 			}
-			
+      */
+			var scaleX;
+			if (plugin.o.scaleX && plugin.o.scaleX !== ''){
+				var scaleX0 = parseFloat(plugin.o.scaleX.split('#')[0], 10);
+				var scaleX1 = (initMatrix !== 'none') ? parseFloat(initTransForm.scaleX) : parseFloat(plugin.o.scaleX.split('#')[1], 10);
+				var deltaSX = scaleX1 - scaleX0;
+				scaleX = ((scaleX0 + (ratio*deltaSX/100))).toFixed(2);
+        if(cssparam.transform){
+          cssparam.transform += 'scaleX('+ scaleX + ')';
+        }
+        else{
+          cssparam.transform = 'scaleX('+ scaleX + ')';
+        }
+			}
+      else if(initMatrix !== 'none' && parseFloat(initTransForm.scaleX) !== 1){
+        if(cssparam.transform){
+          cssparam.transform += 'scaleX('+ parseFloat(initTransForm.scaleX) + ')';
+        }
+        else{
+          cssparam.transform = 'scaleX('+ parseFloat(initTransForm.scaleX) + ')';
+        }
+      }
+			var scaleY;
+      if (plugin.o.scaleY && plugin.o.scaleY !== ''){
+				var scaleY0 = parseFloat(plugin.o.scaleY.split('#')[0], 10);
+				var scaleY1 = (initMatrix !== 'none') ? parseFloat(initTransForm.scaleY) : parseFloat(plugin.o.scaleY.split('#')[1], 10);
+				var deltaSY = scaleY1 - scaleY0;
+				scaleY = ((scaleY0 + (ratio*deltaSY/100))).toFixed(2);
+        if(cssparam.transform){
+          cssparam.transform += 'scaleY('+ scaleY + ') ';
+        }
+        else{
+          cssparam.transform = 'scaleY('+ scaleY + ') ';
+        }
+			}	
+      else if(initMatrix !== 'none' && parseFloat(initTransForm.scaleY) !== 1){
+        if(cssparam.transform){
+          cssparam.transform += 'scaleY('+ parseFloat(initTransForm.scaleY) + ')';
+        }
+        else{
+          cssparam.transform = 'scaleY('+ parseFloat(initTransForm.scaleY) + ')';
+        }
+      }
+      
 			//rotate
 			var initR = (initMatrix !== 'none') ? initTransForm.rotate : 0;
 			var rotate = 0;
@@ -259,9 +305,12 @@ var RegalParallax = function(selector, options){
 			
 			//cssparam['-webkit-filter'] = cssparam.filter;
 			cssparam['-webkit-transform'] = cssparam.transform;
-			
-			plugin.el.style.transform = cssparam.transform;
-			plugin.el.style['-webkit-transform'] = cssparam['-webkit-transform'];
+      
+			//apply only when on sight
+      //if(isInViewport(plugin.el)){
+        plugin.el.style.transform = cssparam.transform;
+        plugin.el.style['-webkit-transform'] = cssparam['-webkit-transform'];
+      //}
 		};
 		
 		this.destroy = function(){
@@ -269,25 +318,33 @@ var RegalParallax = function(selector, options){
 			plugin.el.style.transform = 'none';
 			plugin.el.style['-webkit-transform'] = 'none';
 			window.removeEventListener('scroll', playraf);
-			window.removeEventListener('resize', initVars);
+			window.removeEventListener('resize', initWindowVars);
 		}
 		
 		//parallaxit();
 		var raf;
 		var playraf = function(){
+      //console.log("playraf()");
 			raf = requestAnimationFrame(parallaxit);
 		};
-		window.addEventListener('scroll', playraf);
-		window.addEventListener('resize',  initVars);
+		window.addEventListener('resize',  initWindowVars);
+    document.addEventListener("DOMContentLoaded", function(){
+      //
+    });
+    var initRegalParallax = this.initRegalParallax = function(){
+      initWindowVars();
+      initMatrixVars();
+      window.addEventListener('scroll', playraf);
+      parallaxit();
+    }
 		window.addEventListener('load', function(){
 			setTimeout(function(){
 				//to make sure everything is loaded, especially images
-				initVars();
-				parallaxit();
+				initRegalParallax();
 			}, 500);
 		});
 	}
 	else{
 		console.log("no element declared");
 	}
-}
+};
